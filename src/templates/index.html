@@ -1,0 +1,18 @@
+{% if session.username %}
+<p>Olet kirjautunut nimellä {{ session.username }}</p>
+<a href="/logout">Kirjaudu ulos</a>
+{% else %}
+<title>Fishing diary</title>
+<h1>Welcome to Fishing Diary application!</h1>
+<p>
+With this application You can create your own profile and save details about your fishing season!
+
+
+<form action="/login" method="POST">
+<p>:<br>
+<input type="text" name="username"></p>
+<p>Salasana:<br>
+<input type = "password" name="password"></p>
+<input type = "submit" value="Kirjaudu">
+</form>
+{% endif %}
