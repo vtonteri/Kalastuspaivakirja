@@ -10,7 +10,7 @@ Ohjelma on testattu ja toiminta varmistettu Python 3.9.7 -versiolla. Aiempien ve
 
 **Käyttöohje**
 
-**[Vaatimusmäärittely](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/documentation/vaatimusmaarittely.md)**
+**[Vaatimusmäärittely](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/src/documentation/vaatimusmaarittely.md)**
 
 **Testausdokumentti**
 
