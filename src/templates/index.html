@@ -5,14 +5,26 @@
 <title>Fishing diary</title>
 <h1>Welcome to Fishing Diary application!</h1>
 <p>
-With this application You can create your own profile and save details about your fishing season!
+<p>With this application You can create your own profile and save details about your fishing season!</br>
 
-
+<p>Log in using Your username and password:<br>
 <form action="/login" method="POST">
-<p>:<br>
-<input type="text" name="username"></p>
-<p>Salasana:<br>
-<input type = "password" name="password"></p>
-<input type = "submit" value="Kirjaudu">
+<p>Enter username:<br>
+<input type="text" name="login_username"></p>
+<p>Enter password:<br>
+<input type = "password" name="login_password"></p>
+<input type = "submit" value="Log in">
 </form>
+
+<p> OR: </br>
+
+<p>Create new user:</br>
+<form action="/create" method="POST">
+<p>Enter new username:<br>
+<input type="text" name="new_username"></p>
+<p>Enter new password:<br>
+<input type = "password" name="new_password"></p>
+<input type = "submit" value="Create new user">
+</form>
+
 {% endif %}
