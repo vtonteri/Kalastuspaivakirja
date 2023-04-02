@@ -2,6 +2,8 @@
 
 Ohjelman avulla käyttäjä voi luoda kalastuspäiväkirjan.
 
+Tällä hetkellä ohjelma on vielä huomattavan keskeneräinen. Ohjelmassa avautuu kirjautumisikkuna, mutta käyttäjän tietoja, jotka voidaan syöttää kenttiin, ei käytetä mihinkään, eikä käyttäjä voi luoda uutta tunnusta tai kirjautua sisään.
+
 ## **Huomioita Python-versioista**
 
 Ohjelma on testattu ja toiminta varmistettu Python 3.9.7 -versiolla. Aiempien versioiden kanssa toimintaa ei voida taata.
