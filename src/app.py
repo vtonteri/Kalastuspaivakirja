@@ -43,3 +43,4 @@ def create_new_user():
     sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
     db.session.execute(sql, {"username":new_username, "password":hash_value})
     db.session.commit()
+    return render_template("create_new_user.html")
