@@ -34,8 +34,8 @@ def create_new_user():
     new_username = request.form["new_username"]
     new_password = request.form["new_password"]
     # TODO: check username and password
-    if Check_Username_Own_Method.check_username(new_username) and Check_Password_Own_Method.check_password(new_password):
-        pass
+    #if Check_Username_Own_Method.check_username(new_username) and Check_Password_Own_Method.check_password(new_password):
+    #    pass
 
 
 
