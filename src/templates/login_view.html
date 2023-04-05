@@ -1,0 +1,14 @@
+<title>{{ login_username }}s fishing diary</title>
+<h1>Logged in successfully! Welcome {{ login_username }}!</h1>
+<p>Here you can create new fishing season:</p>
+<form action="/create_fishing_season" method="POST">
+<p>Enter year:<br>
+<input type="text" name="season_year"></p>
+</form>
+
+<p>Here you can select fishing season and add results:</p>
+<form action="/create_fishing_day" method="POST">
+<p>Select season:<br>
+</form>
+ 
+<a href="/logout">Kirjaudu ulos</a>

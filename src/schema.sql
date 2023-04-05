@@ -1,6 +1,7 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    topic TEXT,
+    username TEXT,
+    password TEXT,
     created_at TIMESTAMP
 );
 

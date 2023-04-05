@@ -20,27 +20,40 @@ def index():
     users = result.fetchall()
     return render_template("index.html", users = users)
 
-@app.route("/login", methods=["POST"])
+@app.route("/login_view", methods=["POST"])
 def login():
     login_username = request.form["login_username"]
     login_password = request.form["login_password"]
-    # TODO: check username and password
 
-    session["username"] = login_username
-    return redirect("/")
+    sql = text("SELECT id, password FROM users WHERE username=:username")
+    result = db.session.execute(sql, {"username":login_username})
+    user = result.fetchone()
+    if not user:
+        db.session.rollback()
+        return render_template("/index.html")
+    else:
+        hash_value = user.password
+        if check_password_hash(hash_value, login_password):
+            session["username"] = login_username
+            return render_template("/login_view.html", user = user, login_username = login_username)
 
 @app.route("/create_new_user", methods=["POST"])
 def create_new_user():
     new_username = request.form["new_username"]
     new_password = request.form["new_password"]
-    # TODO: check username and password
-    #if Check_Username_Own_Method.check_username(new_username) and Check_Password_Own_Method.check_password(new_password):
-    #    pass
+    if new_username and new_password:
+        try:
+            hash_value = generate_password_hash(new_password)
+            sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
+            db.session.execute(sql, {"username":new_username, "password":hash_value})
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return render_template("/index.html")
 
-
-
-    hash_value = generate_password_hash(new_password)
-    sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
-    db.session.execute(sql, {"username":new_username, "password":hash_value})
-    db.session.commit()
     return render_template("create_new_user.html")
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    del session["username"]
+    return redirect("/")
