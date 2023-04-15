@@ -30,12 +30,14 @@ def login():
     user = result.fetchone()
     if not user:
         db.session.rollback()
-        return render_template("/index.html")
+        return render_template("/index.html", login_error_message = "Incorrect username!")
     else:
         hash_value = user.password
         if check_password_hash(hash_value, login_password):
             session["username"] = login_username
             return render_template("/login_view.html", user = user, login_username = login_username)
+        elif not check_password_hash(hash_value, login_password):
+            return render_template("/index.html", login_error_message = "Incorrect password!")
 
 @app.route("/create_new_user", methods=["POST"])
 def create_new_user():
@@ -49,7 +51,7 @@ def create_new_user():
             db.session.commit()
         except:
             db.session.rollback()
-            return render_template("/index.html")
+            return render_template("/index.html", create_new_user_error_message = "Username already in use! Choose another one!")
 
     return render_template("create_new_user.html")
 
