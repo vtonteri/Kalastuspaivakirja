@@ -51,7 +51,6 @@ Aktivoi virtuaaliympäristö:
 
 Tähän kirjoitetaan ohjelman komentorivillä suorittamiseen liittyvät ohjeet
 
-
 ## **Releases**
 
 **[Välipalautus 3 release](https://github.com/vtonteri/Kalastuspaivakirja/releases/tag/v.0.2)**
