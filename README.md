@@ -2,9 +2,9 @@
 
 Ohjelman avulla käyttäjä voi luoda kalastuspäiväkirjan.
 
-Tällä hetkellä ohjelma on vielä huomattavan keskeneräinen. Ohjelmassa avautuu kirjautumisikkuna, mutta käyttäjän tietoja, jotka voidaan syöttää kenttiin, ei käytetä mihinkään, eikä käyttäjä voi luoda uutta tunnusta tai kirjautua sisään.
+Käyttäjä luo itselleen profiilin, jonka avulla voi luoda kalastuspäiväkirjan.
 
-**HUOM: Vertaisarviointia varten, lataa release: week 3!**
+**HUOM: Vertaisarviointia varten, lataa ohjelman zip-tiedosto Release-otsikon alla olevasta linkistä!**
 
 ## **Huomioita Python-versioista**
 
@@ -45,6 +45,8 @@ Aktivoi virtuaaliympäristö:
 
 # **Ohjelma käyttöohje**
 
+**[Käyttöohje](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/src/documentation/kayttoohje.md)**
+
 ## **Komentorivitoiminnot**
 
 Tähän kirjoitetaan ohjelman komentorivillä suorittamiseen liittyvät ohjeet
@@ -52,5 +54,4 @@ Tähän kirjoitetaan ohjelman komentorivillä suorittamiseen liittyvät ohjeet
 
 ## **Releases**
 
-Tähän lisätään linkit ohjelman julkaisuihin
-
+**[Välipalautus 3 release](https://github.com/vtonteri/Kalastuspaivakirja/releases/tag/v.0.2)**
