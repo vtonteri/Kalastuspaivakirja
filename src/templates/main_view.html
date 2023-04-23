@@ -1,16 +1,58 @@
 <title>{{ login_username }}s fishing diary</title>
 <h1>Logged in successfully! Welcome {{ login_username }}!</h1>
 <p>Here you can create new fishing season:</p>
-<form action="/create_fishing_season" method="POST">
+<form action="/create_fishing_season" method="POST" onsubmit="return check(this)">
 <p>Enter year:<br>
-<input type="text" name="season_year"></p>
-<p style="color:rgb(17, 0, 255);"><b>{{ create_fishing_season_message_success }}</b></p>
-<p style="color:rgb(250, 42, 5);"><b>{{ create_fishing_season_message_failure }}</b></p>
+<input type="text" name="season_year">
+<p>
+<input type="submit" value="Add new season">
 </form>
 
+<script>
+function check(form) {
+    if (form.season_year.value.length > 4) {
+        alert("Enter valid season, eg. 2023");
+        return false;
+    }
+    if (form.season_year.value.length <= 3) {
+        alert('Enter valid season, eg. 2023');
+        return false;
+    }
+return true;
+}
+</script>
+
+<p style="color:rgb(17, 0, 255);"><b>{{ create_fishing_season_message_success }}</b></p>
+<p style="color:rgb(250, 42, 5);"><b>{{ create_fishing_season_message_failure }}</b></p>
+
 <p>Here you can select fishing season and add results:</p>
-<form action="/create_fishing_day" method="POST">
-<p>Select season:<br>
+<form action="/send_data_edit_season" method="POST" onsubmit="return check_radio()">
+<p>Select season:
+{% for season in seasons %}
+<br><input type = "radio", name = "edit_season_year", value = "{{ season.season }}", id="{{ loop.index }}"> {{ season.season }}
+{% endfor %}
+<br>
+<input type="submit" value="Edit selected season">
 </form>
- 
-<a href="/logout">Kirjaudu ulos</a>
+
+<script>
+    function check_radio() {
+        var radioButton = document.getElementsByName("edit_season_year");
+        var selectedRadio = null;
+        for (var i = 0; i < radioButton.length; i++) {
+            if (radioButton[i].checked) {
+                selectedRadio = radioButton[i];
+                break;
+            }
+        }
+        if (selectedRadio != null) {
+            return true
+        }
+        else {
+            alert("Please select a season!")
+            return false
+        }
+    }
+</script>
+
+<a href="/logout">Log out</a>

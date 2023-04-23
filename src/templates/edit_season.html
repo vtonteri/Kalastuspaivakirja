@@ -1,0 +1,46 @@
+<title>Fishing season {{ selected_season }}</title>
+<h1>Here you can edit your fishing season {{ selected_season }}!</h1>
+
+<form action="/create_fishing_day" method="POST" onsubmit="return check_day_input(this)">
+<p>Enter month:</br>
+<input type="text" name="month">
+<p>Enter day:</br>
+<input type="text" name="day"></br>
+<input type="submit" name="Add days">
+</form>
+
+<script>
+    function check_day_input(form) {
+        if (form.month.value > 12 || form.day.value < 1) {
+            alert("Enter valid month, eg. 7");
+            return false;
+        }
+        if (form.day.value > 31 || form.day.value < 1) {
+            alert('Enter valid season, eg. 2023');
+            return false;
+        }
+    return true;
+    }
+</script>
+
+<form action="/add_weather_to_day" method="POST" onsubmit="return check_weather_input(this)">
+    <p>Enter month:</br>
+    <input type="text" name="month">
+    <p>Enter day:</br>
+    <input type="text" name="day"></br>
+    <input type="submit" name="Add days">
+    </form>
+    
+    <script>
+        function check_weather_input(form) {
+            if (form.month.value > 12 || form.day.value < 1) {
+                alert("Enter valid month, eg. 7");
+                return false;
+            }
+            if (form.day.value > 31 || form.day.value < 1) {
+                alert('Enter valid season, eg. 2023');
+                return false;
+            }
+        return true;
+        }
+    </script>

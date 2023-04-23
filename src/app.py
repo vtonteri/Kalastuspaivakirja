@@ -25,17 +25,25 @@ def login():
     login_username = request.form["login_username"]
     login_password = request.form["login_password"]
 
-    sql = text("SELECT id, password FROM users WHERE username=:username")
+    sql = text("SELECT user_id, password FROM users WHERE username=:username")
     result = db.session.execute(sql, {"username":login_username})
     user = result.fetchone()
+    
     if not user:
         db.session.rollback()
         return render_template("/index.html", login_error_message = "Incorrect username!")
     else:
+        user_id = user[0]
         hash_value = user.password
         if check_password_hash(hash_value, login_password):
             session["username"] = login_username
-            return render_template("/main_view.html", user = user, login_username = login_username)
+            try:
+                sql = text("SELECT season FROM seasons WHERE user_id=:user_id ORDER BY season DESC")
+                result = db.session.execute(sql, {"user_id": user_id})
+                seasons = result.fetchall()
+                return render_template("/main_view.html", user = user, login_username = login_username, seasons = seasons)            
+            except:
+                return render_template("/main_view.html", user = user, login_username = login_username)
         elif not check_password_hash(hash_value, login_password):
             db.session.rollback()
             return render_template("/index.html", login_error_message = "Incorrect password!")
@@ -59,20 +67,59 @@ def create_new_user():
 
 @app.route("/create_fishing_season", methods=["POST"])
 def create_fishing_season():
-    fishing_season = str(request.form["season_year"])
     login_username = session["username"]
-    sql = text("SELECT id FROM users WHERE username =:login_username")
+    sql = text("SELECT user_id FROM users WHERE username =:login_username")
     result = db.session.execute(sql, {"login_username": login_username})
-    user_id = result.fetchone()
-    if fishing_season:
+    user_id = result.fetchone()[0]
+
+    try:
+        fishing_season = int(request.form["season_year"])
+    except ValueError:
+        sql = text("SELECT season FROM seasons WHERE user_id=:user_id ORDER BY season DESC")
+        result = db.session.execute(sql, {"user_id": user_id})
+        seasons = result.fetchall()
+        return render_template("main_view.html", create_fishing_season_message_failure = "Enter valid season, eg. 2023", seasons = seasons)
+    
+    sql_exists = text("SELECT EXISTS(SELECT season FROM seasons WHERE user_id=:user_id AND season =:fishing_season)")
+    result_if_exists = db.session.execute(sql_exists, {"user_id": user_id, "fishing_season": fishing_season})
+    result_to_compare_if_exists = result_if_exists.fetchone()[0]
+
+    if result_to_compare_if_exists == False:
         try:
             sql = text("INSERT INTO seasons (user_id, season) VALUES (:user_id, :season)")
             db.session.execute(sql, {"user_id":user_id, "season":fishing_season})
             db.session.commit()
-            return render_template("main_view.html", create_fishing_season_message_success = "Season added succesfully!")
+
+            sql = text("SELECT season FROM seasons WHERE user_id=:user_id ORDER BY season DESC")
+            result = db.session.execute(sql, {"user_id": user_id})
+            seasons = result.fetchall()
+
+            return render_template("main_view.html", create_fishing_season_message_success = "Season added succesfully!", seasons = seasons)
         except:
             db.session.rollback()
-            return render_template("main_view.html", create_fishing_season_message_failure = "Season was not added, try again!")
+            return render_template("main_view.html", create_fishing_season_message_failure = "Season was not added, try again!", seasons = seasons)
+    
+    elif result_to_compare_if_exists == True or not fishing_season:
+        sql = text("SELECT season FROM seasons WHERE user_id=:user_id ORDER BY season DESC")
+        result = db.session.execute(sql, {"user_id": user_id})
+        seasons = result.fetchall()
+        return render_template("main_view.html", create_fishing_season_message_failure = "Season already exists!", seasons = seasons)
+
+@app.route("/send_data_edit_season", methods = ["POST"])
+def send_data_edit_season():
+    try:
+        selected_season = request.form["edit_season_year"]
+        login_username = session["username"]
+        return render_template("edit_season.html", selected_season = selected_season, login_username = login_username)
+    except:
+        return render_template("main_view.html")
+
+@app.route("/create_fishing_day", methods = ["POST"])
+def create_fishing_day():
+    #selected_season = request.form["selected_season"]
+    return redirect("/")
+    
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
