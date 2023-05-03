@@ -35,12 +35,6 @@ Aktivoi virtuaaliympäristö:
 
 **[Vaatimusmäärittely](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/src/documentation/vaatimusmaarittely.md)**
 
-**Testausdokumentti**
-
-**Tuntikirjanpito**
-
-**Muutosloki**
-
 **Arkkitehtuurikuvaus**
 
 # **Ohjelma käyttöohje**

@@ -4,12 +4,15 @@
 <form action="/create_fishing_season" method="POST" onsubmit="return check(this)">
 <p>Enter year:<br>
 <input type="text" name="season_year">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 <p>
 <input type="submit" value="Add new season">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 <script>
 function check(form) {
+        
     if (form.season_year.value.length > 4) {
         alert("Enter valid season, eg. 2023");
         return false;
@@ -33,6 +36,7 @@ return true;
 {% endfor %}
 <br>
 <input type="submit" value="Edit selected season">
+
 </form>
 
 <script>

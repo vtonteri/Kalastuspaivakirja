@@ -1,12 +1,36 @@
 <title>Fishing season {{ selected_season }}</title>
 <h1>Here you can edit your fishing season {{ selected_season }}!</h1>
 
+<form action="/main_view" method="POST">
+<input type="submit" name="main_view" value="Go to main view"> 
+</form>
+
+<form action="/logout" method="GET">
+<input type="submit" name="logout" value="Log out!"> 
+</form>
+    
 <form action="/create_fishing_day" method="POST" onsubmit="return check_day_input(this)">
 <p>Enter month:</br>
 <input type="text" name="month">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<input type="hidden" name="selected_season" value="{{ selected_season }}">
 <p>Enter day:</br>
 <input type="text" name="day"></br>
 <input type="submit" name="Add days">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<p style="color:rgb(250, 42, 5);"><b>{{ create_new_day_error_message}}</b></p>
+<p style="color:rgb(17, 5, 250);"><b>{{ create_new_day_message}}</b></p>
+</form>
+
+<h1>Edit or add fishing day here:</h1>
+
+<p>Here you can select fishing day and add results:</p>
+<form action="/create_fishing_day" method="POST" onsubmit="return check_radio()">
+<p>Select day:
+{% for day in day_result %}
+<br><input type = "radio", name = "edit_fishing_day", value = "{{ day.date_created }}", id="{{ loop.index }}"> {{ day.date_created }}
+{% endfor %}
+<br>
 </form>
 
 <script>
@@ -23,19 +47,43 @@
     }
 </script>
 
-<form action="/add_weather_to_day" method="POST" onsubmit="return check_weather_input(this)">
-    <h1>Edit or add fishing day here:</h1>
+
+<script>
+    function check_radio() {
+        var radioButton = document.getElementsByName("edit_fishing_day");
+        var selectedRadio = null;
+        for (var i = 0; i < radioButton.length; i++) {
+            if (radioButton[i].checked) {
+                selectedRadio = radioButton[i];
+                break;
+            }
+        }
+        if (selectedRadio != null) {
+            return true
+        }
+        else {
+            alert("Please select a day!")
+            return false
+        }
+    }
+</script>
+
+<form action="/add_weather_to_day" method="POST" onsubmit="return check_weather_input(this), check_radio()">
+
     <p>Enter temperature:</br>
-    <input type="text" name="month">
+    <input type="text" name="temperature">
     <p>Enter visibility:</br>
-    <input type="text" name="day"></br>
+    <input type="radio", name="visibility", value = "dense fog"> Dense fog
+    <input type="radio", name="visibility", value = "moderate fog"> Moderate fog
+    <input type="radio", name="visibility", value = "cloudy"> Cloudy
+    <input type="radio", name="visibility", value = "clear"> Clear
     <p>Enter wind speed:</br>
-    <input type="text" name="day"></br>
+    <input type="text" name="wind_speed"></br>
     <p>Enter wind direction:</br>
-    <input type="text" name="day"></br>
+    <input type="text" name="wind_direction"></br>
     <p>Enter air pressure:</br>
-    <input type="text" name="day"></br>
-    <input type="submit" name="Add days">
+    <input type="text" name="air_pressure"></br>
+    <input type="submit" name="Add weather">
     </form>
     
     <script>
