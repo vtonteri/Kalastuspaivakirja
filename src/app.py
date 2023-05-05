@@ -126,7 +126,7 @@ def send_data_edit_season():
 
         session["season_id"] = season_id
 
-        sql_days = text("SELECT date_created FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
+        sql_days = text("SELECT * FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
         day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
         day_result = day_result_rows.fetchall()
         return render_template("edit_season.html", selected_season = session["season_year"], login_username = login_username, day_result = day_result)
@@ -217,7 +217,7 @@ def edit_season_view():
     result = db.session.execute(sql, {"season_id": session["season_id"]})
     season = result.fetchone()[0]
 
-    sql_days = text("SELECT date_created FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
+    sql_days = text("SELECT * FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
     day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
     day_result = day_result_rows.fetchall()
 
@@ -225,22 +225,42 @@ def edit_season_view():
     
 @app.route("/edit_day_view", methods =["POST"])
 def edit_day():
+
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
-    selected_day = request.form["edit_fishing_day"]
+    
     selected_day_id = request.form["day_id"]
     session["day_id"] = selected_day_id
+    print("edit dayn keskikohdan session day id")
+    print(session["day_id"])
+
+    sql = text("SELECT date_created FROM fishing_days WHERE day_id =:day_id")
+    result = db.session.execute(sql, {"day_id": session["day_id"]})
+    selected_day = result.fetchone()[0]
     session["date"] = selected_day
 
     return render_template("/edit_day.html", selected_day = selected_day, selected_day_id = selected_day_id)
 
 @app.route("/add_fish", methods = ["POST"])
 def add_fish():
+
+    print("1")
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
+    print("2")
+    print("3")
+    print("4")
+    print("5")
+    print(session["day_id"])
+    print(session["date"])
+
     fish_type = request.form["fish_type"]
     fish_weight = request.form["fish_weight"]
     fish_length = request.form["fish_length"]
+    print(fish_length)
+    print(fish_weight)
+    print(fish_type)
+
     if fish_type and fish_weight and fish_weight:
         try:
             fish_length = float(fish_length)
@@ -287,19 +307,55 @@ def add_weather():
 
 @app.route("/explore_fish", methods = ["POST"])
 def explore_fish():
+
+
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
-    
+    selected_day_id = request.form["day_id"]
+    session["day_id"] = selected_day_id
 
-    return render_template("/explore.html")
+    print("explore fish keskikohdan session day id")
+    print(session["day_id"])
+    
+    sql = text("SELECT * FROM catched_fish WHERE fishing_day_id=:fishing_day_id ORDER BY fish_type")
+    result = db.session.execute(sql, {"fishing_day_id": session["day_id"]})
+    all_fish = result.fetchall()
+
+    sql = text("SELECT * FROM catched_fish cf WHERE cf.fishing_day_id=:fishing_day_id AND (cf.fish_type, cf.fish_weight) IN (SELECT fish_type, MAX(fish_weight) FROM catched_fish WHERE fishing_day_id=:fishing_day_id GROUP BY fish_type);")
+    result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
+    biggest_fish = result.fetchall()
+    print(biggest_fish)
+
+    return render_template("/explore.html", all_fish = all_fish, biggest_fish = biggest_fish)
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    del session["username"]
-    del session["day_id"]
-    del session["user_id"]
-    del session["csrf_token"]
-    del session["date"]
-    del session["season_id"]
-    del session["season_year"]
+    try: 
+        session["username"]
+    except:
+        pass
+    try:
+        del session["day_id"]
+    except:
+        pass
+    try: 
+        del session["user_id"]
+    except:
+        pass
+    try:
+        del session["csrf_token"]
+    except:
+        pass
+    try: 
+        del session["date"]
+    except:
+        pass
+    try: 
+        del session["season_id"]
+    except:
+        pass
+    try: 
+        del session["season_year"]
+    except:
+        pass
     return redirect("/")

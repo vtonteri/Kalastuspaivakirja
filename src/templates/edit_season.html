@@ -21,18 +21,17 @@
 <form action="/edit_day_view" method="POST" onsubmit="return check_radio()">
 <p>Select day:
 {% for day in day_result %}
-<br><input type = "radio", name = "edit_fishing_day", value = "{{ day.date_created }}", id="{{ loop.index }}"> {{ day.date_created }}
-<input type="hidden" name="day_id" value="{{ day.day_id }}">
+<br><input type = "radio", name = "day_id", value = "{{ day.day_id }}", id="{{ loop.index }}"> {{ day.date_created }} {{ day.day_id}}
 {% endfor %}
 <br>
-<input type="submit", name="Edit day", value = "Edit day">
+<input type="submit", name="edit day", value = "Edit day">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 <br>
 <h2>Explore fishing day with this button:</h2>
-<input type="submit", name="edit_day", value = "Explore catched fish and weather", formaction="/explore_fish">
+<input type="submit", name="explore day", value = "Explore catched fish and weather", formaction="/explore_fish">
 
 <h2>Delete fishing day with this button:</h2>
-<input type="submit", name="edit_day", value = "Delete selected day", formaction="/delete_day">
+<input type="submit", name="delete day", value = "Delete selected day", formaction="/delete_day">
 
 </form>
 
@@ -53,7 +52,7 @@
 
 <script>
     function check_radio() {
-        var radioButton = document.getElementsByName("edit_fishing_day");
+        var radioButton = document.getElementsByName("day_id");
         var selectedRadio = null;
         for (var i = 0; i < radioButton.length; i++) {
             if (radioButton[i].checked) {

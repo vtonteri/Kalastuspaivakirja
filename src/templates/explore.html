@@ -1,4 +1,31 @@
 <title>Fishing day {{ session.date }}</title>
 <h1>Here you can see your catches during {{ session.date }}</h1>
 
-<h2>Add catched fish to your day here!</h2>
+<h2>All catched fish:</h2>
+
+{% for fish in all_fish %}
+Fish type: {{ fish.fish_type }} Length: {{ fish.fish_length }} Weight: {{ fish.fish_weight }}
+<br>
+{% endfor %}
+
+<h2>Biggest fish:</h2>
+
+{% for fish in biggest_fish %}
+Fish type: {{ fish.fish_type }} Length: {{ fish.fish_length }} Weight: {{ fish.fish_weight }}
+<br>
+{% endfor %}
+
+<br>
+<form action="/edit_season_view" method="POST">
+<input type="submit" name="main_view" value="Back to edit season view"> 
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form action="/main_view" method="POST">
+<input type="submit" name="main_view" value="Back to main view"> 
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form action="/logout" method="GET">
+<input type="submit" name="logout" value="Log out!"> 
+</form>
