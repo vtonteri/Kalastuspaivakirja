@@ -1,0 +1,100 @@
+<title>Fishing day {{ selected_day }}</title>
+<h1>Here you can edit your fishing day {{ selected_day }}!</h1>
+
+
+
+<form action="/add_fish" method="POST" onsubmit="return check_fish_input(this)">
+
+    <p>Enter fish type:</br>
+    <input type="radio", name="fish_type", value = "pike"> Pike
+    <input type="radio", name="fish_type", value = "trout"> Trout
+    <input type="radio", name="fish_type", value = "perch"> Perch
+    <input type="radio", name="fish_type", value = "zander"> Zander
+    <input type="radio", name="fish_type", value = "salmon"> Salmon
+    <input type="radio", name="fish_type", value = "grayling"> Grayling
+    <p>Enter fish length:</br>
+    <input type="text" name="fish_length"></br>
+    <p>Enter fish weight:</br>
+    <input type="text" name="fish_weight"></br>
+    <input type="submit" name="Add fish">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <input type="hidden" name="day_id" value ="{{selected_day_id}}">
+    <p style="color:rgb(17, 5, 250);"><b>{{ fish_added_message}}</b></p>
+    <p style="color:rgb(250, 5, 5);"><b>{{ fish_added_error_message}}</b></p>
+
+    </form>
+
+
+<form action="/add_weather" method="POST" onsubmit="return check_weather_input(this)">
+
+    <p>Enter temperature:</br>
+    <input type="text" name="temperature">
+    <p>Enter visibility:</br>
+    <input type="radio", name="visibility", value = "dense fog"> Dense fog
+    <input type="radio", name="visibility", value = "moderate fog"> Moderate fog
+    <input type="radio", name="visibility", value = "cloudy"> Cloudy
+    <input type="radio", name="visibility", value = "clear"> Clear
+    <p>Enter wind speed:</br>
+    <input type="text" name="wind_speed"></br>
+    <p>Enter wind direction:</br>
+    <input type="text" name="wind_direction"></br>
+    <p>Enter air pressure:</br>
+    <input type="text" name="air_pressure" value="1013"></br>  
+    <input type="submit" name="Add weather">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <p style="color:rgb(17, 5, 250);"><b>{{ weather_added_message}}</b></p>
+    <p style="color:rgb(250, 5, 5);"><b>{{ weather_added_error_message}}</b></p>
+
+
+</form>
+    
+<script>
+    function check_fish_input(form){
+        return true;
+    }
+</script>
+
+<script>
+    function check_weather_input(form) {
+        return true;
+        if (form.temperature.value > 70 || form.temperature.value < -50) {
+            alert("Enter valid temperature: between -50 to 70 celsius");
+            return false;
+        }
+        if (form.pressure.value > 1100 || form.pressure.value < 800) {
+            alert('Enter valid pressure: between 800 to 1100 mbar');
+            return false;
+        }
+        var radioButton = document.getElementsByName("visibility");
+        var selectedRadio = null;
+        for (var i = 0; i < radioButton.length; i++) {
+            if (radioButton[i].checked) {
+                selectedRadio = radioButton[i];
+                break;
+            }
+        }
+        if (selectedRadio != null) {
+            return true
+        }
+        else {
+            alert("Please select visibility!")
+            return false
+        }
+
+    return true;
+    }
+</script>
+
+<form action="/edit_season_view" method="POST">
+<input type="submit" name="main_view" value="Back to edit season view"> 
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form action="/main_view" method="POST">
+<input type="submit" name="main_view" value="Back to main view"> 
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+<form action="/logout" method="GET">
+<input type="submit" name="logout" value="Log out!"> 
+</form>

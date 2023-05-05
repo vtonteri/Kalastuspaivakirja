@@ -6,7 +6,7 @@
 <input type="text" name="season_year">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 <p>
-<input type="submit" value="Add new season">
+<input type="submit" name = "add new season" value="Add new season">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
@@ -35,7 +35,8 @@ return true;
 <br><input type = "radio", name = "edit_season_year", value = "{{ season.season }}", id="{{ loop.index }}"> {{ season.season }}
 {% endfor %}
 <br>
-<input type="submit" value="Edit selected season">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<input type="submit" name="edit season" value="Edit selected season">
 
 </form>
 

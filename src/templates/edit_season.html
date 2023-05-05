@@ -1,14 +1,6 @@
 <title>Fishing season {{ selected_season }}</title>
 <h1>Here you can edit your fishing season {{ selected_season }}!</h1>
-
-<form action="/main_view" method="POST">
-<input type="submit" name="main_view" value="Go to main view"> 
-</form>
-
-<form action="/logout" method="GET">
-<input type="submit" name="logout" value="Log out!"> 
-</form>
-    
+   
 <form action="/create_fishing_day" method="POST" onsubmit="return check_day_input(this)">
 <p>Enter month:</br>
 <input type="text" name="month">
@@ -25,12 +17,17 @@
 <h1>Edit or add fishing day here:</h1>
 
 <p>Here you can select fishing day and add results:</p>
-<form action="/create_fishing_day" method="POST" onsubmit="return check_radio()">
+<form action="/edit_day_view" method="POST" onsubmit="return check_radio()">
 <p>Select day:
 {% for day in day_result %}
 <br><input type = "radio", name = "edit_fishing_day", value = "{{ day.date_created }}", id="{{ loop.index }}"> {{ day.date_created }}
+<input type="hidden" name="day_id" value="{{ day.day_id }}">
 {% endfor %}
 <br>
+<input type="submit" name="Edit day">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<br>
+
 </form>
 
 <script>
@@ -68,34 +65,13 @@
     }
 </script>
 
-<form action="/add_weather_to_day" method="POST" onsubmit="return check_weather_input(this), check_radio()">
 
-    <p>Enter temperature:</br>
-    <input type="text" name="temperature">
-    <p>Enter visibility:</br>
-    <input type="radio", name="visibility", value = "dense fog"> Dense fog
-    <input type="radio", name="visibility", value = "moderate fog"> Moderate fog
-    <input type="radio", name="visibility", value = "cloudy"> Cloudy
-    <input type="radio", name="visibility", value = "clear"> Clear
-    <p>Enter wind speed:</br>
-    <input type="text" name="wind_speed"></br>
-    <p>Enter wind direction:</br>
-    <input type="text" name="wind_direction"></br>
-    <p>Enter air pressure:</br>
-    <input type="text" name="air_pressure"></br>
-    <input type="submit" name="Add weather">
-    </form>
+
+<form action="/main_view" method="POST">
+<input type="submit" name="main_view" value="Back to main view">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
     
-    <script>
-        function check_weather_input(form) {
-            if (form.month.value > 12 || form.day.value < 1) {
-                alert("Enter valid month, eg. 7");
-                return false;
-            }
-            if (form.day.value > 31 || form.day.value < 1) {
-                alert('Enter valid season, eg. 2023');
-                return false;
-            }
-        return true;
-        }
-    </script>
+<form action="/logout" method="GET">
+<input type="submit" name="logout" value="Log out!"> 
+</form>
