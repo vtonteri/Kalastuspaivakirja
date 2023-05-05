@@ -1,6 +1,7 @@
 <title>Fishing season {{ selected_season }}</title>
 <h1>Here you can edit your fishing season {{ selected_season }}!</h1>
-   
+
+<h2>Add fishing day here:</h2>
 <form action="/create_fishing_day" method="POST" onsubmit="return check_day_input(this)">
 <p>Enter month:</br>
 <input type="text" name="month">
@@ -8,13 +9,13 @@
 <input type="hidden" name="selected_season" value="{{ selected_season }}">
 <p>Enter day:</br>
 <input type="text" name="day"></br>
-<input type="submit" name="Add days">
+<input type="submit", name="Add days", value="Add day">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 <p style="color:rgb(250, 42, 5);"><b>{{ create_new_day_error_message}}</b></p>
 <p style="color:rgb(17, 5, 250);"><b>{{ create_new_day_message}}</b></p>
 </form>
 
-<h1>Edit or add fishing day here:</h1>
+<h2>Edit fishing day here:</h2>
 
 <p>Here you can select fishing day and add results:</p>
 <form action="/edit_day_view" method="POST" onsubmit="return check_radio()">
@@ -24,9 +25,14 @@
 <input type="hidden" name="day_id" value="{{ day.day_id }}">
 {% endfor %}
 <br>
-<input type="submit" name="Edit day">
+<input type="submit", name="Edit day", value = "Edit day">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 <br>
+<h2>Explore fishing day with this button:</h2>
+<input type="submit", name="edit_day", value = "Explore catched fish and weather", formaction="/explore_fish">
+
+<h2>Delete fishing day with this button:</h2>
+<input type="submit", name="edit_day", value = "Delete selected day", formaction="/delete_day">
 
 </form>
 

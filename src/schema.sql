@@ -21,8 +21,8 @@ CREATE TABLE catched_fish (
     id SERIAL PRIMARY KEY,
     fishing_day_id INTEGER REFERENCES fishing_days (day_id),
     fish_type TEXT,
-    fish_length INTEGER,
-    fish_weight INTEGER
+    fish_length REAL,
+    fish_weight REAL
 );
 
 CREATE TABLE weather (

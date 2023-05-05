@@ -229,12 +229,8 @@ def edit_day():
         abort(403)
     selected_day = request.form["edit_fishing_day"]
     selected_day_id = request.form["day_id"]
-    print(selected_day_id)
-    sql = text("SELECT * FROM fishing_days WHERE season_id=:season_id")
-    result = db.session.execute(sql, {"season_id":session["season_id"]})
-    fishing_day = result.fetchall()[0]
-    session["day_id"] = fishing_day[0]
-    selected_day = fishing_day[2]
+    session["day_id"] = selected_day_id
+    session["date"] = selected_day
 
     return render_template("/edit_day.html", selected_day = selected_day, selected_day_id = selected_day_id)
 
@@ -245,17 +241,18 @@ def add_fish():
     fish_type = request.form["fish_type"]
     fish_weight = request.form["fish_weight"]
     fish_length = request.form["fish_length"]
-
-    if fish_type and fish_length and fish_weight:
+    if fish_type and fish_weight and fish_weight:
         try:
+            fish_length = float(fish_length)
+            fish_weight = float(fish_weight)
             sql = text("INSERT INTO catched_fish (fishing_day_id, fish_type, fish_length, fish_weight) VALUES (:fishing_day_id, :fish_type, :fish_length, :fish_weight)")
             db.session.execute(sql, {"fishing_day_id":session["day_id"], "fish_type":fish_type, "fish_length":fish_length, "fish_weight":fish_weight})
             db.session.commit()
             return render_template("/edit_day.html", fish_added_message = "Catch added succesfully!")
         except:
-            return render_template("/edit_day.html", fish_added_error_message = "Catch was not added, try again!")
+            return render_template("/edit_day.html", fish_added_error_message = "Catch was not added, try again, maybe with correct values!")
     else:
-        return render_template("/edit_day.html", fish_added_error_message = "Fill all required fields!")
+        return render_template("/edit_day.html", fish_added_error_message = "Fill all required fields with correct values!")
 
 @app.route("/add_weather", methods = ["POST"])
 def add_weather():
@@ -267,33 +264,42 @@ def add_weather():
     wind_direction = request.form["wind_direction"]
     wind_type = f"{wind_direction} {wind_speed}"
     air_pressure = request.form["air_pressure"]
-    print(f"{temperature} {lightning} {wind_type} {air_pressure}")
 
     sql_weather_exist = text("SELECT EXISTS(SELECT temperature FROM weather WHERE fishing_day_id=:fishing_day_id)")
     result = db.session.execute(sql_weather_exist, {"fishing_day_id":session["day_id"]})
     result_if_weather_exist = result.fetchone()[0]
-    print(result_if_weather_exist)
 
-    if result_if_weather_exist == False:
-        print("1")
+    if result_if_weather_exist == False and temperature and lightning and wind_speed and wind_direction and wind_type and air_pressure:
         try:
-            print("2")
             sql = text("INSERT INTO weather (fishing_day_id, temperature, wind_type, pressure, lightning) VALUES (:fishing_day_id, :temperature, :wind_type, :pressure, :lightning)")
-            print("3")
             db.session.execute(sql, {"fishing_day_id":session["day_id"], "temperature":temperature, "wind_type":wind_type, "pressure": air_pressure, "lightning":lightning})
-            print("4")
             db.session.commit()
             return render_template("/edit_day.html", weather_added_message = "Weather added succesfully!")
         except:
-            print("5")
             return render_template("/edit_day.html", weather_added_error_message = "Weather was not added, try again!")
         
     elif result_if_weather_exist == True:
 
         print("6")
-        return render_template("/edit_day.html", weather_added_error_message = "Weather was already added!")    
+        return render_template("/edit_day.html", weather_added_error_message = "Weather was already added!")
+    else:
+        return render_template("/edit_day.html", weather_added_error_message = "Fill all required fields with correct data!")
+
+@app.route("/explore_fish", methods = ["POST"])
+def explore_fish():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    
+
+    return render_template("/explore.html")
 
 @app.route("/logout", methods=["GET"])
 def logout():
     del session["username"]
+    del session["day_id"]
+    del session["user_id"]
+    del session["csrf_token"]
+    del session["date"]
+    del session["season_id"]
+    del session["season_year"]
     return redirect("/")

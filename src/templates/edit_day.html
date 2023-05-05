@@ -1,8 +1,7 @@
-<title>Fishing day {{ selected_day }}</title>
-<h1>Here you can edit your fishing day {{ selected_day }}!</h1>
+<title>Fishing day {{ session.date }}</title>
+<h1>Here you can edit your fishing day {{ session.date }}</h1>
 
-
-
+<h2>Add catched fish to your day here!</h2>
 <form action="/add_fish" method="POST" onsubmit="return check_fish_input(this)">
 
     <p>Enter fish type:</br>
@@ -24,21 +23,29 @@
 
     </form>
 
+<h2>Add weather information to your day here!</h2>
 
 <form action="/add_weather" method="POST" onsubmit="return check_weather_input(this)">
 
-    <p>Enter temperature:</br>
+    <p>Enter temperature (between -50 to +70 celsius):</br>
     <input type="text" name="temperature">
-    <p>Enter visibility:</br>
+    <p>Choose visibility:</br>
     <input type="radio", name="visibility", value = "dense fog"> Dense fog
     <input type="radio", name="visibility", value = "moderate fog"> Moderate fog
     <input type="radio", name="visibility", value = "cloudy"> Cloudy
     <input type="radio", name="visibility", value = "clear"> Clear
-    <p>Enter wind speed:</br>
+    <p>Enter wind speed (m/s):</br>
     <input type="text" name="wind_speed"></br>
-    <p>Enter wind direction:</br>
-    <input type="text" name="wind_direction"></br>
-    <p>Enter air pressure:</br>
+    <p>Choose wind direction (N = north, E = east, S = south, W = west NE = northeast, etc):</br>
+    <input type="radio", name="wind_direction", value = "north"> North
+    <input type="radio", name="wind_direction", value = "east"> East
+    <input type="radio", name="wind_direction", value = "south"> South
+    <input type="radio", name="wind_direction", value = "west"> West
+    <input type="radio", name="wind_direction", value = "northeast"> NE
+    <input type="radio", name="wind_direction", value = "southeast"> SE
+    <input type="radio", name="wind_direction", value = "southwest"> SW
+    <input type="radio", name="wind_direction", value = "northwest"> NW
+    <p>Enter air pressure (mbar):</br>
     <input type="text" name="air_pressure" value="1013"></br>  
     <input type="submit" name="Add weather">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -50,22 +57,16 @@
     
 <script>
     function check_fish_input(form){
-        return true;
-    }
-</script>
 
-<script>
-    function check_weather_input(form) {
-        return true;
-        if (form.temperature.value > 70 || form.temperature.value < -50) {
-            alert("Enter valid temperature: between -50 to 70 celsius");
+        if (form.fish_length.value > 200 || form.fish_length.value < 0) {
+            alert("Enter valid fish length: between 1 to 200 cm");
             return false;
         }
-        if (form.pressure.value > 1100 || form.pressure.value < 800) {
-            alert('Enter valid pressure: between 800 to 1100 mbar');
+        if (form.fish_weight.value > 100 || form.fish_weight.value < 0) {
+            alert("Enter valid weight: between 1 to 100 kg");
             return false;
         }
-        var radioButton = document.getElementsByName("visibility");
+        var radioButton = document.getElementsByName("fish_type");
         var selectedRadio = null;
         for (var i = 0; i < radioButton.length; i++) {
             if (radioButton[i].checked) {
@@ -77,8 +78,59 @@
             return true
         }
         else {
-            alert("Please select visibility!")
+            alert("Please select fish type!")
             return false
+        }
+        return true;
+    }
+</script>
+
+<script>
+    function check_weather_input(form) {
+
+        var radioButton = document.getElementsByName("visibility");
+        var selectedRadio_visibility = null;
+        for (var i = 0; i < radioButton.length; i++) {
+            if (radioButton[i].checked) {
+                selectedRadio_visibility = radioButton[i];
+                break;
+            }
+        }
+
+        if (selectedRadio_visibility == null) {
+            alert("Please select visibility or wind direction!")
+            return false;
+        }
+
+        var radioButton_wind = document.getElementsByName("wind_direction");
+        var selectedRadio_wind_direction = null;
+        for (var i = 0; i < radioButton_wind.length; i++) {
+            if (radioButton_wind[i].checked) {
+                selectedRadio_wind_direction = radioButton_wind[i];
+                break;
+            }
+        }
+
+        if (selectedRadio_wind_direction == null) {
+            alert("Please select visibility or wind direction!")
+            return false;
+        }
+
+        if (form.temperature.value > 70 || form.temperature.value < -50) {
+            alert("Enter valid temperature: between -50 to 70 celsius");
+            return false;
+        }
+        if (form.wind_speed.value > 40 || form.wind_speed.value < 0) {
+            alert("Enter valid wind speed between 0 to 40 m/s");
+            return false;
+        }
+        if (form.wind_direction.value > 70 || form.wind_direction.value < -50) {
+            alert("Enter valid temperature: between -50 to 70 celsius");
+            return false;
+        }
+        if (form.pressure.value > 1100 || form.pressure.value < 800) {
+            alert('Enter valid pressure: between 800 to 1100 mbar');
+            return false;
         }
 
     return true;
