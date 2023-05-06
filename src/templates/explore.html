@@ -35,7 +35,10 @@
 <h2>Weather:</h2>
 
 {% for item in weather %}
-<b>Temperature:</b> {{ item.temperature }} <b>Wind type (direction and speed (m/s)):</b> {{ item.wind_type }} <b>Air pressure:</b> {{ item.pressure }} <b>Visibility:</b> {{ item.lightning }}
+<b>Temperature:</b> {{ item.temperature }} <br>
+<b>Wind type (direction and speed (m/s)):</b> {{ item.wind_type }} <br>
+<b>Air pressure:</b> {{ item.pressure }} <br>
+<b>Visibility:</b> {{ item.lightning }}<br>
 <br>
 {% endfor %}
 

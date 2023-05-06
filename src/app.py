@@ -13,6 +13,9 @@ app.secret_key = getenv("SECRET_KEY")
 
 @app.route("/")
 def index():
+    """
+    Method that returns index page when Flask server is started and is called. 
+    """
     sql = text("SELECT * FROM users ORDER BY username DESC")
     result = db.session.execute(sql)
     users = result.fetchall()
@@ -20,6 +23,13 @@ def index():
 
 @app.route("/login", methods=["POST"])
 def login():
+    """
+    Method is called from index.html, when user tries to log in to application.
+    Args: username and password
+    
+    Method returns either error message (if username or password is incorrect) or
+    main_view.html page. Method sets session["username"], session["csrf_token"] and session["user_id"] parameters
+    """
     login_username = request.form["login_username"]
     login_password = request.form["login_password"]
 
@@ -50,6 +60,15 @@ def login():
 
 @app.route("/create_new_user", methods=["POST"])
 def create_new_user():
+    """
+    Method is called from index.html when user wants to create a new user.
+    Args: new_username and new_password
+
+    Method checks if username already exists and if not creates new user.
+
+    Method returns index.html and message if creation was successful and error message otherwise.
+    """
+
     new_username = request.form["new_username"]
     new_password = request.form["new_password"]
 
@@ -76,6 +95,17 @@ def create_new_user():
 
 @app.route("/create_fishing_season", methods=["POST"])
 def create_fishing_season():
+
+    """
+    Method is called from main_view.html. It creates a new fishing season.
+
+    Args: fishing_season. 
+
+    Method checks if csfr-token is correct, the input is correct and the user has not already added season. 
+    If token and input are correct and the user has not already added season, method injects a new season into
+    database and returns main_view.html with all users fishing_seasons.
+    If input is incorrect or season has already added, error message is shown.
+    """
 
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
@@ -114,6 +144,13 @@ def create_fishing_season():
 
 @app.route("/send_data_edit_season", methods = ["POST"])
 def send_data_edit_season():
+
+    """
+    Method is called from main_view. 
+    Args: selected season from selection at main_view.html and fetches all fishing days assosiated to that season.
+
+    Method returns edit_season.html with information about all days associated to the selected season. 
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     try:
@@ -131,35 +168,24 @@ def send_data_edit_season():
         day_result = day_result_rows.fetchall()
         return render_template("edit_season.html", selected_season = session["season_year"], login_username = login_username, day_result = day_result)
     except:
-        print("virhe 4")
-        return render_template("main_view.html")
-    
-@app.route("/send_data_edit_day", methods=["POST"])
-def send_data_edit_day():
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
-    try:
-        selected_season = request.form["edit_season_year"]
-        login_username = session["username"]
-
-        sql_days = text("SELECT date_created FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
-        day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
-        day_result = day_result_rows.fetchall()
-
-        return render_template("edit_season.html", selected_season = selected_season, login_username = login_username, day_result = day_result)
-    except:
         return render_template("main_view.html")
 
 @app.route("/create_fishing_day", methods = ["POST"])
 def create_fishing_day():
+    """
+    Method is called from edit_season.html.
+    Args: season, month and day for the fishing day to be created.
+
+    Method checks csrf_token, and input. If they are correct then method checks if day already exist. If it does, it returns error message.
+    If day is not created, it returns edit_season.html with success message.
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selected_season = request.form["selected_season"]
     month_to_database = request.form["month"]
     day_to_database = request.form["day"]
     date_to_database = f"{selected_season}-{month_to_database}-{day_to_database}"
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+
     try:
         sql_exists = text("SELECT EXISTS(SELECT date_created FROM fishing_days WHERE season_id = :season_id AND date_created = :date_created)")
         result_if_exists_2 = db.session.execute(sql_exists, {"season_id": session["season_id"], "date_created": date_to_database})
@@ -172,7 +198,7 @@ def create_fishing_day():
         if result_to_compare_if_exists_2 == False:
             try:
                 sql = text("INSERT INTO fishing_days (season_id, date_created) VALUES (:season_id, :date_created)")
-                result = db.session.execute(sql, {"season_id": session["season_id"], "date_created": date_to_database})
+                db.session.execute(sql, {"season_id": session["season_id"], "date_created": date_to_database})
                 db.session.commit()
                 
                 sql_days = text("SELECT * FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
@@ -181,7 +207,7 @@ def create_fishing_day():
 
                 return render_template("edit_season.html", create_new_day_message = "Fishing day created succesfully!", selected_season = selected_season, day_result = day_result)
             except:
-                return render_template("edit_season.html", create_new_day_error_message = "Something went wrong 2, try again!", selected_season = selected_season, day_result = day_result)
+                return render_template("edit_season.html", create_new_day_error_message = "Something went wrong, try again!", selected_season = selected_season, day_result = day_result)
         
         elif result_to_compare_if_exists_2 == True:
             return render_template("edit_season.html", create_new_day_error_message = "Day already exists! Create new or edit existing!", selected_season = selected_season, day_result = day_result)
@@ -190,12 +216,16 @@ def create_fishing_day():
         sql_days = text("SELECT date_created FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
         day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
         day_result = day_result_rows.fetchall()
-        return render_template("edit_season.html", create_new_day_error_message = "Something went wrong 1, try again!", selected_season = selected_season, day_result = day_result)
+        return render_template("edit_season.html", create_new_day_error_message = "Something went wrong, try again!", selected_season = selected_season, day_result = day_result)
 
     return render_template("edit_season.html", create_new_day_message = "Fishing day created succesfully!", day_result = day_result, selected_season = selected_season)
 
 @app.route("/main_view", methods =["POST"])
 def main_view():
+    """
+    Method is used to move between views. This method is called from edit_day.html and explore.html
+    It returns main_view.html with users fishing seasons.
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     login_username = session["username"]
@@ -213,6 +243,10 @@ def main_view():
     
 @app.route("/edit_season_view", methods =["POST"])
 def edit_season_view():
+    """
+    Method is used to move between views. This method is called from edit_day.html
+    It returns edit_season_view.html with users fishing days.
+    """
     sql = text("SELECT season FROM seasons WHERE season_id=:season_id")
     result = db.session.execute(sql, {"season_id": session["season_id"]})
     season = result.fetchone()[0]
@@ -225,7 +259,11 @@ def edit_season_view():
     
 @app.route("/edit_day_view", methods =["POST"])
 def edit_day():
-
+    """
+    Method is from edit_season.html
+    Args: method takes selected fishing day as input and forwards it to edit_day.html
+    It returns edit_day.html with users fishing days.
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selected_day_id = request.form["day_id"]
@@ -240,6 +278,13 @@ def edit_day():
 
 @app.route("/add_fish", methods = ["POST"])
 def add_fish():
+    """
+    Method is called from edit_day.html.
+    Args: method takes fish type, length and weight as input.
+    Method checks csrf-token and inputs. If they are correct, in inserts new fish to database associated to a selected day.
+    Method returns error message if database insertion was not succesful. If it was, then success message is returned.
+    """
+
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
 
@@ -264,6 +309,13 @@ def add_fish():
 
 @app.route("/add_weather", methods = ["POST"])
 def add_weather():
+    """
+    Method is called from edit_day.html.
+    Args: method takes temperature, visibility, wind speed, wind direction, and air pressure as input.
+    Method checks csrf-token, inputs and if weather has already added to day. If they are correct and no weather already exist, 
+    it inserts new weather to database associated to a selected day.
+    Method returns error message if database insertion was not succesful. If it was, then success message is returned.
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     temperature = request.form["temperature"]
@@ -293,6 +345,9 @@ def add_weather():
 
 @app.route("/explore_fish", methods = ["POST"])
 def explore_fish():
+    """
+    Method fetches information from the database and returns total number of fish catched, all fish, biggest fish, average fish weights and weather during the selected day, 
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selected_day_id = request.form["day_id"]
@@ -326,6 +381,12 @@ def explore_fish():
 
 @app.route("/delete_day", methods=["POST"])
 def delete_day():
+
+    """
+    Method deletes selected fishing day and all associated fish and weather data.
+    Args: selected day
+    Method returns edit_season.html with all fishing days after deletion.
+    """
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selected_day_id = request.form["day_id"]
@@ -348,6 +409,10 @@ def delete_day():
 
 @app.route("/logout", methods=["GET"])
 def logout():
+    """
+    Method is called from main_view.html, edit_season.html, edit_day.html and explore.html.
+    Method deletes session-data and returns blank index.html.
+    """
     try: 
         session["username"]
     except:
