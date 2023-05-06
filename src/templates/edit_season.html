@@ -1,12 +1,12 @@
-<title>Fishing season {{ selected_season }}</title>
-<h1>Here you can edit your fishing season {{ selected_season }}!</h1>
+<title>Fishing season {{ session.season_year }}</title>
+<h1>Here you can edit your fishing season {{ session.season_year }}</h1>
 
 <h2>Add fishing day here:</h2>
 <form action="/create_fishing_day" method="POST" onsubmit="return check_day_input(this)">
 <p>Enter month:</br>
 <input type="text" name="month">
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-<input type="hidden" name="selected_season" value="{{ selected_season }}">
+<input type="hidden" name="selected_season" value="{{ session.season_year }}">
 <p>Enter day:</br>
 <input type="text" name="day"></br>
 <input type="submit", name="Add days", value="Add day">
@@ -21,7 +21,7 @@
 <form action="/edit_day_view" method="POST" onsubmit="return check_radio()">
 <p>Select day:
 {% for day in day_result %}
-<br><input type = "radio", name = "day_id", value = "{{ day.day_id }}", id="{{ loop.index }}"> {{ day.date_created }} {{ day.day_id}}
+<br><input type = "radio", name = "day_id", value = "{{ day.day_id }}", id="{{ loop.index }}"> {{ day.date_created }}
 {% endfor %}
 <br>
 <input type="submit", name="edit day", value = "Edit day">
@@ -31,9 +31,17 @@
 <input type="submit", name="explore day", value = "Explore catched fish and weather", formaction="/explore_fish">
 
 <h2>Delete fishing day with this button:</h2>
-<input type="submit", name="delete day", value = "Delete selected day", formaction="/delete_day">
 
+<input type="submit", name="delete day", value = "Delete selected day", formaction="/delete_day", onsubmit="return confirmDelete(this)">
+<p style="color:rgb(250, 42, 5);"><b>{{ delete_day_error_message}}</b></p>
+<p style="color:rgb(17, 5, 250);"><b>{{ delete_day_message}}</b></p>
 </form>
+  
+<script>
+  function confirmDelete(form) {
+    return confirm("Are you sure you want to delete this day?");
+  }
+</script>
 
 <script>
     function check_day_input(form) {

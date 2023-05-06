@@ -3,17 +3,42 @@
 
 <h2>All catched fish:</h2>
 
+<b>Total number of catched fish: {{ total_fish }}</b> <br><br>
+
 {% for fish in all_fish %}
-Fish type: {{ fish.fish_type }} Length: {{ fish.fish_length }} Weight: {{ fish.fish_weight }}
+<b>Fish type:</b> {{ fish.fish_type }} <b>Length:</b> {{ fish.fish_length }} <b>Weight:</b> {{ fish.fish_weight }}
 <br>
 {% endfor %}
 
 <h2>Biggest fish:</h2>
 
 {% for fish in biggest_fish %}
-Fish type: {{ fish.fish_type }} Length: {{ fish.fish_length }} Weight: {{ fish.fish_weight }}
+<b>Fish type:</b> {{ fish.fish_type }} <b>Length:</b> {{ fish.fish_length }} <b>Weight:</b> {{ fish.fish_weight }}
 <br>
 {% endfor %}
+<br>
+
+<h2>Total number of catched fish:</h2>
+
+{% for fish in how_many_fish %}
+<b>Fish type:</b> {{ fish.fish_type }} <b>Total number of catched fish:</b> {{ fish.num_fish }}
+<br>
+{% endfor %}
+
+<h2>Average fish weights:</h2>
+
+{% for fish in average_fish %}
+<b>Fish type:</b> {{ fish.fish_type }} <b>Average weight:</b> {{ fish.avg_weight|round(1) }}
+<br>
+{% endfor %}
+
+<h2>Weather:</h2>
+
+{% for item in weather %}
+<b>Temperature:</b> {{ item.temperature }} <b>Wind type (direction and speed (m/s)):</b> {{ item.wind_type }} <b>Air pressure:</b> {{ item.pressure }} <b>Visibility:</b> {{ item.lightning }}
+<br>
+{% endfor %}
+
 
 <br>
 <form action="/edit_season_view" method="POST">

@@ -15,7 +15,7 @@
     <input type="text" name="fish_length"></br>
     <p>Enter fish weight:</br>
     <input type="text" name="fish_weight"></br>
-    <input type="submit" name="Add fish">
+    <input type="submit" name="add fish" value = "Add fish">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="hidden" name="day_id" value ="{{selected_day_id}}">
     <p style="color:rgb(17, 5, 250);"><b>{{ fish_added_message}}</b></p>
@@ -47,7 +47,7 @@
     <input type="radio", name="wind_direction", value = "northwest"> NW
     <p>Enter air pressure (mbar):</br>
     <input type="text" name="air_pressure" value="1013"></br>  
-    <input type="submit" name="Add weather">
+    <input type="submit" name = "add_weather" value="Add weather">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <p style="color:rgb(17, 5, 250);"><b>{{ weather_added_message}}</b></p>
     <p style="color:rgb(250, 5, 5);"><b>{{ weather_added_error_message}}</b></p>

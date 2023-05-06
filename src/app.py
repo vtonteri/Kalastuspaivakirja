@@ -228,11 +228,8 @@ def edit_day():
 
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
-    
     selected_day_id = request.form["day_id"]
     session["day_id"] = selected_day_id
-    print("edit dayn keskikohdan session day id")
-    print(session["day_id"])
 
     sql = text("SELECT date_created FROM fishing_days WHERE day_id =:day_id")
     result = db.session.execute(sql, {"day_id": session["day_id"]})
@@ -243,28 +240,19 @@ def edit_day():
 
 @app.route("/add_fish", methods = ["POST"])
 def add_fish():
-
-    print("1")
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
-    print("2")
-    print("3")
-    print("4")
-    print("5")
-    print(session["day_id"])
-    print(session["date"])
 
     fish_type = request.form["fish_type"]
     fish_weight = request.form["fish_weight"]
     fish_length = request.form["fish_length"]
-    print(fish_length)
-    print(fish_weight)
-    print(fish_type)
 
     if fish_type and fish_weight and fish_weight:
         try:
             fish_length = float(fish_length)
             fish_weight = float(fish_weight)
+            if fish_length <= 0 or fish_weight <= 0:
+                return render_template("/edit_day.html", fish_added_error_message = "Catch was not added, try again, maybe with correct values!")
             sql = text("INSERT INTO catched_fish (fishing_day_id, fish_type, fish_length, fish_weight) VALUES (:fishing_day_id, :fish_type, :fish_length, :fish_weight)")
             db.session.execute(sql, {"fishing_day_id":session["day_id"], "fish_type":fish_type, "fish_length":fish_length, "fish_weight":fish_weight})
             db.session.commit()
@@ -299,23 +287,16 @@ def add_weather():
             return render_template("/edit_day.html", weather_added_error_message = "Weather was not added, try again!")
         
     elif result_if_weather_exist == True:
-
-        print("6")
         return render_template("/edit_day.html", weather_added_error_message = "Weather was already added!")
     else:
         return render_template("/edit_day.html", weather_added_error_message = "Fill all required fields with correct data!")
 
 @app.route("/explore_fish", methods = ["POST"])
 def explore_fish():
-
-
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     selected_day_id = request.form["day_id"]
     session["day_id"] = selected_day_id
-
-    print("explore fish keskikohdan session day id")
-    print(session["day_id"])
     
     sql = text("SELECT * FROM catched_fish WHERE fishing_day_id=:fishing_day_id ORDER BY fish_type")
     result = db.session.execute(sql, {"fishing_day_id": session["day_id"]})
@@ -324,9 +305,46 @@ def explore_fish():
     sql = text("SELECT * FROM catched_fish cf WHERE cf.fishing_day_id=:fishing_day_id AND (cf.fish_type, cf.fish_weight) IN (SELECT fish_type, MAX(fish_weight) FROM catched_fish WHERE fishing_day_id=:fishing_day_id GROUP BY fish_type);")
     result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
     biggest_fish = result.fetchall()
-    print(biggest_fish)
 
-    return render_template("/explore.html", all_fish = all_fish, biggest_fish = biggest_fish)
+    sql = text("SELECT fish_type, AVG(fish_weight) AS avg_weight FROM catched_fish WHERE fishing_day_id=:fishing_day_id GROUP BY fish_type;")
+    result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
+    average_fish = result.fetchall()
+
+    sql = text("SELECT fish_type, COUNT(*) AS num_fish FROM catched_fish WHERE fishing_day_id=:fishing_day_id GROUP BY fish_type;")
+    result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
+    how_many_fish = result.fetchall()
+
+    sql = text("SELECT COUNT(*) AS total_fish FROM catched_fish WHERE fishing_day_id=:fishing_day_id;")
+    result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
+    total_fish = result.fetchone()[0]
+
+    sql = text("SELECT * FROM weather WHERE fishing_day_id=:fishing_day_id;")
+    result = db.session.execute(sql, {"fishing_day_id":session["day_id"]})
+    weather = result.fetchall()
+
+    return render_template("/explore.html", all_fish = all_fish, biggest_fish = biggest_fish, average_fish = average_fish, how_many_fish = how_many_fish, total_fish = total_fish, weather = weather)
+
+@app.route("/delete_day", methods=["POST"])
+def delete_day():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    selected_day_id = request.form["day_id"]
+
+    try:
+        sql_delete = text("DELETE FROM fishing_days WHERE day_id=:day_id")
+        db.session.execute(sql_delete, {"day_id":selected_day_id})
+        db.session.commit()
+    except:
+        sql_days = text("SELECT * FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
+        day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
+        day_result = day_result_rows.fetchall()
+        return render_template("/edit_season.html", day_result = day_result, delete_day_error_message = "Day was deleted, try again!")
+
+    sql_days = text("SELECT * FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
+    day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
+    day_result = day_result_rows.fetchall()
+
+    return render_template("/edit_season.html", day_result = day_result, delete_day_message = "Day and its associated fish and weather deleted succesfully!")
 
 @app.route("/logout", methods=["GET"])
 def logout():
