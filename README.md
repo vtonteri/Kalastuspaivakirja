@@ -4,8 +4,6 @@ Ohjelman avulla käyttäjä voi luoda kalastuspäiväkirjan.
 
 Käyttäjä luo itselleen profiilin, jonka avulla voi luoda kalastuspäiväkirjan.
 
-**HUOM: Vertaisarviointia varten, lataa ohjelman zip-tiedosto Release-otsikon alla olevasta linkistä!**
-
 ## **Huomioita Python-versioista**
 
 Ohjelma on testattu ja toiminta varmistettu Python 3.9.7 -versiolla. Aiempien versioiden kanssa toimintaa ei voida taata.
@@ -16,6 +14,11 @@ Ohjelma on testattu ja toiminta varmistettu Python 3.9.7 -versiolla. Aiempien ve
 
 - Luo Pythonin virtuaaliympäristö kansion sisään komennolla
 *python -m venv venv*
+
+TAI 
+
+*python3 -m venv venv*
+
 
 Aktivoi virtuaaliympäristö:
 *venv\Scripts, aja activate.bat*
@@ -33,18 +36,12 @@ Aktivoi virtuaaliympäristö:
 
 - Luo schema.sql -tiedoston mukaiset tietokantataulut PostgreSQL-komentoikkunassa
 
+- Aloita sovelluksen käyttäminen Fishing_diary/src -kansiossa:
+
+*flask run*
+
 **[Vaatimusmäärittely](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/src/documentation/vaatimusmaarittely.md)**
-
-**Arkkitehtuurikuvaus**
-
-# **Ohjelma käyttöohje**
-
-**[Käyttöohje](https://github.com/vtonteri/Kalastuspaivakirja/blob/master/src/documentation/kayttoohje.md)**
-
-## **Komentorivitoiminnot**
-
-Tähän kirjoitetaan ohjelman komentorivillä suorittamiseen liittyvät ohjeet
 
 ## **Releases**
 
-**[Välipalautus 3 release](https://github.com/vtonteri/Kalastuspaivakirja/releases/tag/v.0.2)**
+**[Lopullinen palautus](https://github.com/vtonteri/Kalastuspaivakirja/releases/tag/v.1.0)**

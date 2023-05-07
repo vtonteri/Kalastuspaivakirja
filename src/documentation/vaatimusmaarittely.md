@@ -13,4 +13,16 @@ Ohjelman avulla käyttäjä voi luoda kalastuspäiväkirjan.
                 - Kalastuspäivän alla on seuraavat erilliset muistiinpanot:
                     - Saadut kalat (tietokantataulu 4)
                     - Päivän säätila (tietokantataulu 5)
-            - 
+
+## **Toiminnallisuudet**
+
+- Käyttäjä kykenee katselemaan päänäkymässä (main_view.html) luotuja kalastuskausia. 
+- Kalastuskausia voi muokata valitsemalla kalastuskauden ja siirtymällä muokkaussivulle.
+- Kalastuskauden muokkaussivulla käyttäjä voi lisätä kalastuspäiviä kauteen; kalastuspäivän luomisen jälkeen käyttäjä voi lisätä kalastuspäivään säätiedot ja saadut kalat. 
+- Säätiedot voi lisätä vain kerran. Kaloja käyttäjä voi lisätä rajattoman määrän.
+- Käyttäjä voi tuhota luodun kalastuspäivän kalastuskauden muokkaussivulla. 
+- Kalastuspäivän tietoja voi tarkastella erillisellä sivulla (explore.html)
+    - Sivulla näytetään valitulle kalastuspäivälle tallennettujen kalojen määrät, suurimmat kalat, keskipainot lajeittain sekä päivän säätiedot.
+- Käyttäjä voi liikkua eri sivujen välillä sivuilla olevien nappien avulla
+- Käyttäjä voi kirjautua ulos miltä sivulta tahansa
+    - Ulos kirjautuminen tuhoaa käynnissä olevan istunnon ja istuntoon tallennetut tiedot

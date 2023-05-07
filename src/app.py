@@ -78,6 +78,9 @@ def create_new_user():
         result_username_exist = result_exist.fetchone()[0]
         if result_username_exist == False:
             try:
+
+                if len(new_password) < 8:
+                    raise Exception
                 hash_value = generate_password_hash(new_password)
                 sql = text("INSERT INTO users (username, password, created_at) VALUES (:username, :password, NOW())")
                 db.session.execute(sql, {"username":new_username, "password":hash_value})
@@ -85,7 +88,7 @@ def create_new_user():
                 return render_template("/index.html", create_new_user_message = "New user created successfully! Now you can login with username and password")
             except:
                 db.session.rollback()
-                return render_template("/index.html", create_new_user_error_message = "Username already in use! Choose another one!")
+                return render_template("/index.html", create_new_user_error_message = "Username already in use or too short password (password should contain at least 8 characters)! Choose another one!")
             
         elif result_username_exist == True:
             return render_template("/index.html", create_new_user_error_message = "Username already in use, please choose another one!")
@@ -187,6 +190,12 @@ def create_fishing_day():
     date_to_database = f"{selected_season}-{month_to_database}-{day_to_database}"
 
     try:
+       
+        if int(month_to_database) > 12 or int(month_to_database) < 1:
+            raise Exception
+        if int(day_to_database) < 1 or int(day_to_database) > 31:
+            raise Exception
+
         sql_exists = text("SELECT EXISTS(SELECT date_created FROM fishing_days WHERE season_id = :season_id AND date_created = :date_created)")
         result_if_exists_2 = db.session.execute(sql_exists, {"season_id": session["season_id"], "date_created": date_to_database})
         result_to_compare_if_exists_2 = result_if_exists_2.fetchone()[0]
@@ -213,10 +222,11 @@ def create_fishing_day():
             return render_template("edit_season.html", create_new_day_error_message = "Day already exists! Create new or edit existing!", selected_season = selected_season, day_result = day_result)
 
     except:
+        print("tässä ollaan2")
         sql_days = text("SELECT date_created FROM fishing_days WHERE season_id = :season_id ORDER BY date_created")
         day_result_rows = db.session.execute(sql_days, {"season_id":session["season_id"]})
         day_result = day_result_rows.fetchall()
-        return render_template("edit_season.html", create_new_day_error_message = "Something went wrong, try again!", selected_season = selected_season, day_result = day_result)
+        return render_template("edit_season.html", create_new_day_error_message = "Something went wrong, try again, perhaps with correct values (month 1 - 12 and days 1 - 31)!", selected_season = selected_season, day_result = day_result)
 
     return render_template("edit_season.html", create_new_day_message = "Fishing day created succesfully!", day_result = day_result, selected_season = selected_season)
 
